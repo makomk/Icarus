@@ -6,8 +6,8 @@ NET "RxD" LOC = "D1";
 NET "TxD" LOC = "B1";
 
 # TTL level serial port: ja3 = rxd, ja2 = txd
-NET "extminer_txd<0>" LOC = "D22";
-NET "extminer_rxd<0>" LOC = "B22";
+NET "extminer_txd<0>" LOC = "B22";
+NET "extminer_rxd<0>" LOC = "D22";
 
 # Button 0
 //NET "reset" LOC = "A4";
