@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 PREFIX="cm1out/shortfin_icarus_cm1"
-VARIANTS="test_140 test_150 test_160"
+VARIANTS="test_140 test_150 test_160 test_170_overclock test_180_overclock test_190_overclock test_200_overclock"
 
 egrep -v 'COMP "([RT]xD|extminer_[rt]xd<.>|dip<0>)" LOCATE' fpgaminer_top.pcf > "$PREFIX.pcf"
 cp fpgaminer_top.ncd "$PREFIX.ncd"
