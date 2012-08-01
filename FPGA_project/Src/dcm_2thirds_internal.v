@@ -70,7 +70,10 @@ module main_pll
   input         CLK_IN1,
   // Clock out ports
   output        CLK_OUT1,
-  output			 CLK_OUT2
+  output			 CLK_OUT2,
+  // Lock indicators
+  output PLL_LOCK,
+  output DCM_LOCK
  );
 
   // Input buffering
@@ -92,6 +95,34 @@ module main_pll
   wire clkfb;
   wire clk0;
   wire clkfx,clkdv;
+  wire pll_fb, pll_clk0, pll_reset, pll_locked;
+  
+  assign PLL_LOCK = pll_locked;
+  assign DCM_LOCK = locked_int;
+  
+  assign pll_reset = 1'b0; // FIXME
+
+	PLL_BASE #(
+    	    .BANDWIDTH("LOW"),
+    	    .CLKFBOUT_MULT(5),
+    	    .CLKOUT0_DIVIDE(5),
+    	    .CLKOUT0_DUTY_CYCLE(0.5),
+    	    .CLK_FEEDBACK("CLKFBOUT"), 
+    	    .COMPENSATION("PLL2DCM"),
+	    .DIVCLK_DIVIDE(1),
+    	    .REF_JITTER(0.5),
+	    .RESET_ON_LOSS_OF_LOCK("FALSE"),
+		 .CLKIN_PERIOD(10.0)
+       )
+       pll0 (
+    	    .CLKFBOUT(pll_fb),
+	    .CLKOUT0(pll_clk0),
+	    .CLKFBIN(pll_fb),
+	    .CLKIN(clkin1),
+	    .RST(pll_reset),
+		 .LOCKED(pll_locked)
+	);
+
 
   DCM_SP
   #(.CLKDV_DIVIDE          (2.000),
@@ -106,7 +137,7 @@ module main_pll
     .STARTUP_WAIT          ("FALSE"))
   dcm_sp_inst
     // Input clock
-   (.CLKIN                 (clkin1),
+   (.CLKIN                 (pll_clk0),
     .CLKFB                 (clkfb),
     // Output clocks
     .CLK0                  (clk0),
@@ -126,7 +157,7 @@ module main_pll
     // Other control and status signals
     .LOCKED                (locked_int),
     .STATUS                (status_int),
-    .RST                   (1'b0),
+    .RST                   (pll_reset || !pll_locked),
     // Unused pin- tie low
     .DSSEN                 (1'b0));
 

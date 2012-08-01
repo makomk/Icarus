@@ -14,7 +14,8 @@ module fpgaminer_top (osc_clk, RxD, TxD, led, extminer_rxd, extminer_txd, dip);
    input osc_clk;
 	input [3:0]dip;
 	wire hash_clk, dv_clk;
-   main_pll dcm23 (.CLK_IN1(osc_clk), .CLK_OUT1(hash_clk), .CLK_OUT2(dv_clk));
+	wire pll_locked, dcm_locked;
+   main_pll dcm23 (.CLK_IN1(osc_clk), .CLK_OUT1(hash_clk), .CLK_OUT2(dv_clk), .PLL_LOCK(pll_locked), .DCM_LOCK(dcm_locked));
    
    // Reset input buffers, both the workdata buffers in miners, and
    // the nonce receivers in hubs
@@ -137,8 +138,8 @@ assign new_nonces[0] = new_ticket;
 
    output [3:0] led;
    //assign led[0] = |golden_nonce;
-   assign led[1] = ~RxD;
-   assign led[2] = ~TxD;
+   assign led[1] = pll_locked;
+   assign led[2] = dcm_locked;
  	assign led[3] = ~miner_busy;
    // Light up only from locally found nonces, not ext_port results//
   pwm_fade pf1 (.clk(dv_clk), .trigger(|new_nonces[LOCAL_MINERS-1:0]), .drive(led[0]));
