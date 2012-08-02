@@ -1,26 +1,26 @@
 # UCF for a Nexys2 500K board
-NET "osc_clk" LOC = "J1";
+NET "osc_clk" LOC = "J1" | IOSTANDARD = LVCMOS33;
 
 # serial port receive & transmit
-NET "RxD" LOC = "D1";
-NET "TxD" LOC = "B1";
+NET "RxD" LOC = "D1" | IOSTANDARD = LVCMOS33 | PULLUP;
+NET "TxD" LOC = "B1" | IOSTANDARD = LVCMOS33 | SLEW=QUIETIO;
 
 # TTL level serial port: ja3 = rxd, ja2 = txd
-NET "extminer_txd<0>" LOC = "B22";
-NET "extminer_rxd<0>" LOC = "D22";
+NET "extminer_txd<0>" LOC = "B22" | IOSTANDARD = LVCMOS33 | SLEW=QUIETIO;
+NET "extminer_rxd<0>" LOC = "D22" | IOSTANDARD = LVCMOS33 | PULLUP;
 
 # Button 0
 //NET "reset" LOC = "A4";
 
-NET "led[0]" LOC = "A18";
-NET "led[1]" LOC = "B18";
-NET "led[2]" LOC = "A17";
-NET "led[3]" LOC = "A16";
+NET "led[0]" LOC = "A18" | IOSTANDARD = LVCMOS33 | SLEW=QUIETIO;
+NET "led[1]" LOC = "B18" | IOSTANDARD = LVCMOS33 | SLEW=QUIETIO;
+NET "led[2]" LOC = "A17" | IOSTANDARD = LVCMOS33 | SLEW=QUIETIO;
+NET "led[3]" LOC = "A16" | IOSTANDARD = LVCMOS33 | SLEW=QUIETIO;
 
-NET "dip[0]" LOC = "A4";
-NET "dip[1]" LOC = "D6";
-NET "dip[2]" LOC = "C6";
-NET "dip[3]" LOC = "C8";
+NET "dip[0]" LOC = "A4" | IOSTANDARD = LVCMOS33 | PULLDOWN;
+NET "dip[1]" LOC = "D6" | IOSTANDARD = LVCMOS33;
+NET "dip[2]" LOC = "C6" | IOSTANDARD = LVCMOS33;
+NET "dip[3]" LOC = "C8" | IOSTANDARD = LVCMOS33;
 
 
 

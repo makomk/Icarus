@@ -94,7 +94,7 @@ module main_pll
   wire clkfx,clkdv;
 
   DCM_SP
-  #(.CLKDV_DIVIDE          (2.000),
+  #(.CLKDV_DIVIDE          (4.000),
     .CLKFX_DIVIDE          (10),
     .CLKFX_MULTIPLY        (19),
     .CLKIN_DIVIDE_BY_2     ("FALSE"),

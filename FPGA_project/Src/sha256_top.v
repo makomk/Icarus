@@ -61,7 +61,8 @@ reg             nonce_to = 1'b1;
 reg		[255:0]	midstate_d1;
 reg		[95:0]	data2_d1;
 reg 		nonce_to_num_d1;
-reg		start_mining_d1;
+reg		start_mining_d1 = 1'b0;
+reg		start_mining_d2 = 1'b0;
 reg	[31:0]	hash2_head;
 reg    miner_busy;
 reg    reset_n1,reset_n2,reset_n3,reset_n4,reset_n5,reset_n6;
@@ -96,7 +97,7 @@ always@(posedge clk)
     if(reset_n5)
         work <= #1 1'b0;
     else  
-		if(start_mining_d1)
+		if(start_mining_d2)
 			work <= #1 1'b1;
 		 else
 			if(got_ticket_d1 || nonce_to_num_d1)
@@ -109,7 +110,7 @@ always@(posedge clk)
 begin
     if(reset_n6)
         nonce <= #1 NONCE_CT;
-	 else if(start_mining_d1)
+	 else if(start_mining_d2)
 		  nonce <= #1 NONCE_CT;
     else if(work)
         nonce <= #1 nonce_next;
@@ -128,7 +129,9 @@ always@(posedge clk)
 			midstate_d1 <= midstate;
 			hash2_head <= hash2;
 			data2_d1 <= data2;
+			// start_mining is actually fron a different clock domain
 			start_mining_d1 <= start_mining;
+			start_mining_d2 <= start_mining_d1;
 			miner_busy    <= work;
 	end
 
@@ -145,7 +148,7 @@ always@(posedge clk)
 begin
     if(reset_n1)
 		  got_ticket <= #1 1'b0;
-	 else if (start_mining_d1)
+	 else if (start_mining_d2)
 		got_ticket <= #1 1'b0;
     else if(got_ticket_d3)
       got_ticket <= #1 1'b1;
@@ -157,7 +160,7 @@ always@(posedge clk)
 begin
     if(reset_n2)
         golden_nonce_ct <= #1 31'b0;
-	 else if (start_mining_d1)
+	 else if (start_mining_d2)
 		  golden_nonce_ct <= #1 31'b0;
 	 else if (work)
 		  golden_nonce_ct <= #1 golden_nonce_ct + 1'b1;
