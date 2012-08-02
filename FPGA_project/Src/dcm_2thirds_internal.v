@@ -92,17 +92,20 @@ module main_pll
   wire clkfb;
   wire clk0;
   wire clkfx,clkdv;
-  wire dcm_reset;
   
   reg[21:0] dcm_watchdog = 22'd0;
+  reg locked_d1 = 1'b0, locked_d2 = 1'b0, dcm_reset = 1'b0;
   
   always @ (posedge clkin1)
-	if(locked_int)
+  begin
+	locked_d1 <= (locked_int & !status_int[2]);
+	locked_d2 <= locked_d1;
+	if(locked_d2)
 		dcm_watchdog <= 22'd0;
 	else
 		dcm_watchdog <= dcm_watchdog + 22'd1;
-		
-	assign dcm_reset = dcm_watchdog[21] & dcm_watchdog[20];
+	dcm_reset <= dcm_watchdog[21] & dcm_watchdog[20];
+  end
 
   DCM_SP
   #(.CLKDV_DIVIDE          (2.000),
