@@ -92,6 +92,17 @@ module main_pll
   wire clkfb;
   wire clk0;
   wire clkfx,clkdv;
+  wire dcm_reset;
+  
+  reg[21:0] dcm_watchdog = 22'd0;
+  
+  always @ (posedge clkin1)
+	if(locked_int)
+		dcm_watchdog <= 22'd0;
+	else
+		dcm_watchdog <= dcm_watchdog + 22'd1;
+		
+	assign dcm_reset = dcm_watchdog[21] & dcm_watchdog[20];
 
   DCM_SP
   #(.CLKDV_DIVIDE          (2.000),
@@ -126,7 +137,7 @@ module main_pll
     // Other control and status signals
     .LOCKED                (locked_int),
     .STATUS                (status_int),
-    .RST                   (1'b0),
+    .RST                   (dcm_reset),
     // Unused pin- tie low
     .DSSEN                 (1'b0));
 
