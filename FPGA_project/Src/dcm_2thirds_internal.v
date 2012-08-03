@@ -95,10 +95,14 @@ module main_pll
   
   reg[21:0] dcm_watchdog = 22'd0;
   reg locked_d1 = 1'b0, locked_d2 = 1'b0, dcm_reset = 1'b0;
+  reg[3:0] clkfx_ctr, clkfx_ctr_d1, clkfx_ctr_d2, clkfx_ctr_d3;
   
   always @ (posedge clkin1)
   begin
-	locked_d1 <= (locked_int & !status_int[2]);
+	clkfx_ctr_d1 <= clkfx_ctr;
+	clkfx_ctr_d2 <= clkfx_ctr_d1;
+	clkfx_ctr_d3 <= clkfx_ctr_d2;
+	locked_d1 <= (locked_int && !status_int[2] && (clkfx_ctr_d2 != clkfx_ctr_d3));
 	locked_d2 <= locked_d1;
 	if(locked_d2)
 		dcm_watchdog <= 22'd0;
@@ -106,6 +110,9 @@ module main_pll
 		dcm_watchdog <= dcm_watchdog + 22'd1;
 	dcm_reset <= dcm_watchdog[21] & dcm_watchdog[20];
   end
+  
+  always @ (posedge clkfx)
+	clkfx_ctr = clkfx_ctr + 4'd1;
 
   DCM_SP
   #(.CLKDV_DIVIDE          (2.000),
