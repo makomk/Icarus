@@ -1,0 +1,18 @@
+select comp "extminer_txd<0>"
+unplace
+select -k site B21
+place
+unselect -all
+select comp "extminer_rxd<0>"
+unplace
+select -k site B22
+place
+unselect -all
+select comp "dip<0>
+unplace
+select -k site F10
+place
+unselect -all
+autoroute -all
+save
+quit!
