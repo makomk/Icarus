@@ -102,7 +102,7 @@ module main_pll
 	clkfx_ctr_d1 <= clkfx_ctr;
 	clkfx_ctr_d2 <= clkfx_ctr_d1;
 	clkfx_ctr_d3 <= clkfx_ctr_d2;
-	locked_d1 <= (locked_int && !status_int[2] && (clkfx_ctr_d2 != clkfx_ctr_d3));
+	locked_d1 <= (locked_int && (clkfx_ctr_d2 != clkfx_ctr_d3));
 	locked_d2 <= locked_d1;
 	if(locked_d2)
 		dcm_watchdog <= 22'd0;
@@ -111,7 +111,7 @@ module main_pll
 	dcm_reset <= dcm_watchdog[21] & dcm_watchdog[20];
   end
   
-  always @ (posedge clkfx)
+  always @ (posedge CLK_OUT1)
 	clkfx_ctr = clkfx_ctr + 4'd1;
 
   DCM_SP
