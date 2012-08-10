@@ -49,3 +49,13 @@ NET "M/data2_d1[*]" TIG;
 NET "M/got_ticket_d1" TIG;
 
 CONFIG VCCAUX=3.3;
+
+INST "dcm23/clkfx_ctr_*" AREA_GROUP = "pblock_dcmwd";
+INST "dcm23/dcm_reset" AREA_GROUP = "pblock_dcmwd";
+INST "dcm23/locked_int_clkfx_*" AREA_GROUP = "pblock_dcmwd";
+INST "dcm23/dcm_watchdog_*" AREA_GROUP = "pblock_dcmwd";
+INST "dcm23/locked_d*" AREA_GROUP = "pblock_dcmwd";
+INST "dcm23/Mcount_*" AREA_GROUP = "pblock_dcmwd";
+AREA_GROUP "pblock_dcmwd" RANGE=SLICE_X78Y0:SLICE_X79Y6;
+
+INST "dcm23/dcm_sp_inst" LOC=DCM_X0Y1;
