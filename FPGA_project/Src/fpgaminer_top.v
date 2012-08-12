@@ -19,14 +19,19 @@ module fpgaminer_top (osc_clk, RxD, TxD, led, extminer_rxd, extminer_txd, dip);
    // Reset input buffers, both the workdata buffers in miners, and
    // the nonce receivers in hubs
    //input  ;
-	reg extreset_d1 = 1'b0, extreset_d2 = 1'b0, extreset_d3 = 1'b0;
+	reg extreset_d1 = 1'b0, extreset_d2 = 1'b0;
+	reg[7:0] reset_ctr = 8'd0;
+	wire reset;
 	always @ (posedge dv_clk)
 	begin
 		extreset_d1 <= dip[0];
 		extreset_d2 <= extreset_d1;
-		extreset_d3 <= extreset_d2;
+		if(extreset_d1 | reset_ctr[7])
+			reset_ctr <= reset_ctr + 1;
+		else
+			reset_ctr <= 8'd0;
 	end
-   assign 	  reset = extreset_d2 & extreset_d3;
+	assign reset = reset_ctr[7];
 	wire nonce_start = dip[1];
 	wire miner_busy;
    
