@@ -1,4 +1,4 @@
-setattr comp dcm23/dcm_sp_inst CLKFX_MULTIPLY 15
-setattr comp dcm23/dcm_sp_inst CLKFX_DIVIDE 10
+setattr comp dcm23/dcm_sp_inst CLKFX_MULTIPLY 3
+setattr comp dcm23/dcm_sp_inst CLKFX_DIVIDE 2
 save
 quit!
