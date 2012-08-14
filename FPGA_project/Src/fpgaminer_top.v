@@ -21,7 +21,7 @@ module fpgaminer_top (osc_clk, RxD, TxD, led, extminer_rxd, extminer_txd, dip);
    //input  ;
 	reg extreset_d1 = 1'b0, extreset_d2 = 1'b0;
 	reg[7:0] reset_ctr = 8'd0;
-	wire reset;
+	reg reset = 1'd0;
 	always @ (posedge dv_clk)
 	begin
 		extreset_d1 <= dip[0];
@@ -30,8 +30,8 @@ module fpgaminer_top (osc_clk, RxD, TxD, led, extminer_rxd, extminer_txd, dip);
 			reset_ctr <= reset_ctr + 1;
 		else
 			reset_ctr <= 8'd0;
+		reset <= reset_ctr[7];
 	end
-	assign reset = reset_ctr[7];
 	wire nonce_start = dip[1];
 	wire miner_busy;
    

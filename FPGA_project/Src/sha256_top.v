@@ -65,8 +65,9 @@ reg		start_mining_d1 = 1'b0;
 reg		start_mining_d2 = 1'b0;
 reg	[31:0]	hash2_head;
 reg    miner_busy;
+(* KEEP *)
 reg    reset_n1,reset_n2,reset_n3,reset_n4,reset_n5,reset_n6;
-
+reg rst_d1, rst_d2;
 
 //  BUFGCE clkout1_buf
 //   (.O   (clk_work),
@@ -135,13 +136,15 @@ always@(posedge clk)
 			miner_busy    <= work;
 	end
 
-always@(*)
+always@(posedge clk)
 	begin
-			reset_n1	= rst;
-			reset_n2	= rst;
-			reset_n3	= rst;
-			reset_n5	= rst;
-			reset_n6	= rst;
+		   rst_d1 <= rst;
+			rst_d2 <= rst_d1;
+			reset_n1	<= rst_d2;
+			reset_n2	<= rst_d2;
+			reset_n3	<= rst_d2;
+			reset_n5	<= rst_d2;
+			reset_n6	<= rst_d2;
 	end
 
 always@(posedge clk)
