@@ -31,11 +31,11 @@ module sha256_top (
 	 start_mining
 );
 
-parameter NONCE_CT = 31'd256;
+parameter NONCE_CT = 28'd256;
 
 input           clk;
 input           rst;
-input nonce_start;
+input [3:0] nonce_start;
 input start_mining;
 
 input   [255:0] midstate;
@@ -45,16 +45,16 @@ output          miner_busy;
 output          got_ticket;
 output  [31:0]  golden_nonce;
 
-wire    [30:0]  nonce_next;
+wire    [27:0]  nonce_next;
 wire            pipe1_end, pipe2_end;
 wire    [255:0] hash;
 wire    [31:0]  hash2;
 wire    [511:0] data;
 wire 	  nonce_to_set;
-reg     [30:0]  nonce;
+reg     [27:0]  nonce;
 wire     start_mining;
 reg     [31:0]  golden_nonce;
-reg 	  [30:0]  golden_nonce_ct;
+reg 	  [27:0]  golden_nonce_ct;
 reg             got_ticket, got_ticket_d1,got_ticket_d2, got_ticket_d3 ;
 reg             work;
 reg             nonce_to = 1'b1;
@@ -91,7 +91,7 @@ reg rst_d1, rst_d2;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-assign nonce_next    = nonce + 31'd1;
+assign nonce_next    = nonce + 28'd1;
 
 
 always@(posedge clk)
@@ -162,9 +162,9 @@ end
 always@(posedge clk)
 begin
     if(reset_n2)
-        golden_nonce_ct <= #1 31'b0;
+        golden_nonce_ct <= #1 28'b0;
 	 else if (start_mining_d2)
-		  golden_nonce_ct <= #1 31'b0;
+		  golden_nonce_ct <= #1 28'b0;
 	 else if (work)
 		  golden_nonce_ct <= #1 golden_nonce_ct + 1'b1;
     else

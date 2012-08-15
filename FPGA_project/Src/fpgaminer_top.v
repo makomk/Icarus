@@ -19,12 +19,12 @@ module fpgaminer_top (osc_clk, RxD, TxD, led, extminer_rxd, extminer_txd, dip);
    // Reset input buffers, both the workdata buffers in miners, and
    // the nonce receivers in hubs
    //input  ;
-	reg extreset_d1 = 1'b0, extreset_d2 = 1'b0;
+	(* KEEP *) reg extreset_d1 = 1'b0, extreset_d2 = 1'b0;
 	reg[7:0] reset_ctr = 8'd0;
-	reg reset = 1'd0;
+	(* KEEP *) reg reset = 1'd0;
 	always @ (posedge dv_clk)
 	begin
-		extreset_d1 <= dip[0];
+		extreset_d1 <=  1'b0; // dip[0];
 		extreset_d2 <= extreset_d1;
 		if(extreset_d1 | reset_ctr[7])
 			reset_ctr <= reset_ctr + 1;
@@ -32,7 +32,7 @@ module fpgaminer_top (osc_clk, RxD, TxD, led, extminer_rxd, extminer_txd, dip);
 			reset_ctr <= 8'd0;
 		reset <= reset_ctr[7];
 	end
-	wire nonce_start = dip[1];
+	wire[3:0] nonce_start = dip;
 	wire miner_busy;
    
    // Nonce stride for all miners in the cluster, not just this hub.
