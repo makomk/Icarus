@@ -1,6 +1,6 @@
 // by teknohog, replaces virtual_wire by rs232
 
-module serial_receive(clk, RxD, midstate, data2, reset, RxRDY);
+module serial_receive(clk, RxD, midstate, data2, nonce_start_mask, reset, RxRDY);
    input      clk;
    input      RxD;
    
@@ -11,6 +11,7 @@ module serial_receive(clk, RxD, midstate, data2, reset, RxRDY);
 
    output [255:0] midstate;
    output [95:0] data2;
+	output [3:0] nonce_start_mask;
 	output RxRDY;
 	
 	assign RxRDY = RxD_data_ready;
@@ -36,6 +37,7 @@ module serial_receive(clk, RxD, midstate, data2, reset, RxRDY);
 
    assign midstate = input_buffer[511:256];
    assign data2 = input_buffer[95:0];
+	assign nonce_start_mask = input_buffer[96] ? input_buffer[103:100] : 4'h8;
    
    // we probably don't need a busy signal here, just read the latest
    // complete input that is available.

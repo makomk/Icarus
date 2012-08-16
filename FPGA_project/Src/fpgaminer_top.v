@@ -96,8 +96,9 @@ module fpgaminer_top (osc_clk, RxD, TxD, led, extminer_rxd, extminer_txd, dip);
 
    // Common workdata input for local miners
    wire [255:0] 	midstate, data2;
+	wire [3:0] nonce_start_mask;
 	wire start_mining;
-   serial_receive serrx (.clk(dv_clk), .RxD(RxD), .midstate(midstate), .data2(data2), .reset(reset), .RxRDY(start_mining));
+   serial_receive serrx (.clk(dv_clk), .RxD(RxD), .midstate(midstate), .data2(data2), .nonce_start_mask(nonce_start_mask), .reset(reset), .RxRDY(start_mining));
 
    // Local miners now directly connected
 	
@@ -106,7 +107,7 @@ module fpgaminer_top (osc_clk, RxD, TxD, led, extminer_rxd, extminer_txd, dip);
 	reg [3:0]ticket_CS = 4'b0001;
 	reg [3:0]ticket_NS;
 
-	sha256_top M (.clk(hash_clk), .rst(reset), .midstate(midstate), .data2(data2), .golden_nonce(slave_nonces[31:0]), .got_ticket(got_ticket), .miner_busy(miner_busy), .nonce_start(nonce_start), .start_mining(start_mining));
+	sha256_top M (.clk(hash_clk), .rst(reset), .midstate(midstate), .data2(data2), .nonce_start_mask(nonce_start_mask), .golden_nonce(slave_nonces[31:0]), .got_ticket(got_ticket), .miner_busy(miner_busy), .nonce_start(nonce_start), .start_mining(start_mining));
 
 
 always@ (posedge dv_clk)

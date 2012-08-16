@@ -28,14 +28,16 @@ module sha256_top (
     got_ticket,
     golden_nonce,
 	 nonce_start,
+	 nonce_start_mask,
 	 start_mining
 );
 
-parameter NONCE_CT = 28'd256;
+parameter NONCE_CT = 32'd256;
 
 input           clk;
 input           rst;
 input [3:0] nonce_start;
+input [3:0] nonce_start_mask;
 input start_mining;
 
 input   [255:0] midstate;
@@ -45,21 +47,22 @@ output          miner_busy;
 output          got_ticket;
 output  [31:0]  golden_nonce;
 
-wire    [27:0]  nonce_next;
+wire    [31:0]  nonce_next;
 wire            pipe1_end, pipe2_end;
 wire    [255:0] hash;
 wire    [31:0]  hash2;
 wire    [511:0] data;
 wire 	  nonce_to_set;
-reg     [27:0]  nonce;
+reg     [31:0]  nonce;
 wire     start_mining;
 reg     [31:0]  golden_nonce;
-reg 	  [27:0]  golden_nonce_ct;
+reg 	  [31:0]  golden_nonce_ct;
 reg             got_ticket, got_ticket_d1,got_ticket_d2, got_ticket_d3 ;
 reg             work;
 reg             nonce_to = 1'b1;
 reg		[255:0]	midstate_d1;
 reg		[95:0]	data2_d1;
+reg 		[31:0] nonce_bits;
 reg 		nonce_to_num_d1;
 reg		start_mining_d1 = 1'b0;
 reg		start_mining_d2 = 1'b0;
@@ -78,7 +81,7 @@ reg rst_d1, rst_d2;
 		.clk(clk),
 		.state(midstate_d1),
 		.state2(midstate_d1),
-		.data({384'h000002800000000000000000000000000000000000000000000000000000000000000000000000000000000080000000, nonce_start,nonce, data2_d1}),
+		.data({384'h000002800000000000000000000000000000000000000000000000000000000000000000000000000000000080000000, (nonce|nonce_bits), data2_d1}),
 		.hash(hash)
 	);
 
@@ -91,7 +94,7 @@ reg rst_d1, rst_d2;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-assign nonce_next    = nonce + 28'd1;
+assign nonce_next    = nonce + 32'd1;
 
 
 always@(posedge clk)
@@ -126,10 +129,11 @@ always@(posedge clk)
 			got_ticket_d1 <= (hash2_head== 32'ha41f32e7);
 			got_ticket_d2 <= got_ticket_d1;
 			got_ticket_d3 <= got_ticket_d2;
-			nonce_to_num_d1 <= (nonce == 28'hfffffff);
+			nonce_to_num_d1 <= ((nonce | {nonce_start_mask, 28'd0}) == 32'hffffffff);
 			midstate_d1 <= midstate;
 			hash2_head <= hash2;
 			data2_d1 <= data2;
+			nonce_bits <= {nonce_start & nonce_start_mask, 28'd0};
 			// start_mining is actually fron a different clock domain
 			start_mining_d1 <= start_mining;
 			start_mining_d2 <= start_mining_d1;
@@ -162,9 +166,9 @@ end
 always@(posedge clk)
 begin
     if(reset_n2)
-        golden_nonce_ct <= #1 28'b0;
+        golden_nonce_ct <= #1 32'd0;
 	 else if (start_mining_d2)
-		  golden_nonce_ct <= #1 28'b0;
+		  golden_nonce_ct <= #1 32'd0;
 	 else if (work)
 		  golden_nonce_ct <= #1 golden_nonce_ct + 1'b1;
     else
@@ -173,7 +177,7 @@ end
 //////////////////////////////////////////////
 always@(*)
 begin
-	golden_nonce = got_ticket?{nonce_start,golden_nonce_ct}:32'b0;
+	golden_nonce = got_ticket?(golden_nonce_ct|nonce_bits):32'b0;
 end
 
 
