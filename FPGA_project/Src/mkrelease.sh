@@ -1,8 +1,9 @@
 #!/bin/sh
 set -e
 mkdir -p cm1out
-PREFIX="cm1out/halffin"
-VARIANTS="test_140 test_150 test_160 test_170 test_180_overclock test_190_overclock test_200_overclock"
+PREFIX="cm1out/hexanchus_preview"
+#VARIANTS="test_140 test_150 test_160 test_170 test_180_overclock test_190_overclock test_200_overclock"
+VARIANTS="test_150 test_160 test_170"
 
 #egrep -v 'COMP "([RT]xD|extminer_[rt]xd<.>|dip<0>)" LOCATE' fpgaminer_top.pcf > "$PREFIX.pcf"
 cp fpgaminer_top.pcf "$PREFIX.pcf"

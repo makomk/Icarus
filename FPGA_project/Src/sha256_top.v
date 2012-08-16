@@ -126,7 +126,7 @@ always@(posedge clk)
 			got_ticket_d1 <= (hash2_head== 32'ha41f32e7);
 			got_ticket_d2 <= got_ticket_d1;
 			got_ticket_d3 <= got_ticket_d2;
-			nonce_to_num_d1 <= (nonce == 31'h7fffffff);
+			nonce_to_num_d1 <= (nonce == 28'hfffffff);
 			midstate_d1 <= midstate;
 			hash2_head <= hash2;
 			data2_d1 <= data2;
