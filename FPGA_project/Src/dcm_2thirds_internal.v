@@ -95,7 +95,7 @@ module main_pll
   
   reg[21:0] dcm_watchdog = 22'd0;
   reg locked_d1 = 1'b0, locked_d2 = 1'b0;
-  wire dcm_reset;
+  reg dcm_reset = 1'b0;
   reg[3:0] clkfx_ctr, clkfx_ctr_d1, clkfx_ctr_d2, clkfx_ctr_d3;
   
   always @ (posedge clkin1)
@@ -109,8 +109,8 @@ module main_pll
 		dcm_watchdog <= 22'd0;
 	else
 		dcm_watchdog <= dcm_watchdog + 22'd1;
+	dcm_reset <= dcm_watchdog[21];
   end
-	assign dcm_reset = dcm_watchdog[21] & dcm_watchdog[20];
   
   always @ (posedge CLK_OUT1)
 	clkfx_ctr = clkfx_ctr + 4'd1;

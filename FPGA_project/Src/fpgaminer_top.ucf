@@ -6,8 +6,8 @@ NET "RxD" LOC = "D1" | IOSTANDARD = LVCMOS33 | PULLUP;
 NET "TxD" LOC = "B1" | IOSTANDARD = LVCMOS33 | SLEW=QUIETIO;
 
 # TTL level serial port: ja3 = rxd, ja2 = txd
-NET "extminer_txd<0>" LOC = "B22" | IOSTANDARD = LVCMOS33 | SLEW=QUIETIO;
-NET "extminer_rxd<0>" LOC = "D22" | IOSTANDARD = LVCMOS33 | PULLUP;
+NET "extminer_txd<0>" LOC = "B21" | IOSTANDARD = LVCMOS33 | SLEW=QUIETIO;
+NET "extminer_rxd<0>" LOC = "B22" | IOSTANDARD = LVCMOS33 | PULLUP;
 
 # Button 0
 //NET "reset" LOC = "A4";
@@ -47,5 +47,8 @@ NET "dip[*]" TIG;
 NET "M/midstate_d1[*]" TIG;
 NET "M/data2_d1[*]" TIG;
 NET "M/got_ticket_d1" TIG;
+
+NET "dcm23/locked_int" TIG;
+NET "dcm23/dcm_reset" TIG;
 
 CONFIG VCCAUX=3.3;
