@@ -1,6 +1,6 @@
 // by teknohog, replaces virtual_wire by rs232
 
-module serial_receive(clk, RxD, midstate, data2, nonce_start_mask, reset, RxRDY);
+module serial_receive(clk, RxD, midstate, data2, nonce_start_mask, RxRDY);
    input      clk;
    input      RxD;
    
@@ -23,13 +23,6 @@ module serial_receive(clk, RxD, midstate, data2, nonce_start_mask, reset, RxRDY)
    // test for these fails, should ask for new data, so it needs more
    // logic on the return side too. The check bits could be legible
    // 7seg for quick feedback :)
-
-   // The above is related to a more general issue of messing up the
-   // input buffers due to partial data. For example, when a serial
-   // cable is disconnected and reconnected. A manual reset is a much
-   // nicer remedy than complete reprogramming, and it has other uses
-   // in a cluster.
-   input 	  reset;
    
    reg [511:0] input_buffer;
 //   reg [511:0] input_copy;

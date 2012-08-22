@@ -16,22 +16,6 @@ module fpgaminer_top (osc_clk, RxD, TxD, led, extminer_rxd, extminer_txd, dip);
 	wire hash_clk, dv_clk;
    main_pll dcm23 (.CLK_IN1(osc_clk), .CLK_OUT1(hash_clk), .CLK_OUT2(dv_clk));
    
-   // Reset input buffers, both the workdata buffers in miners, and
-   // the nonce receivers in hubs
-   //input  ;
-	(* KEEP *) reg extreset_d1 = 1'b0, extreset_d2 = 1'b0;
-	reg[7:0] reset_ctr = 8'd0;
-	(* KEEP *) reg reset = 1'd0;
-	always @ (posedge dv_clk)
-	begin
-		extreset_d1 <=  1'b0; // dip[0];
-		extreset_d2 <= extreset_d1;
-		if(extreset_d1 | reset_ctr[7])
-			reset_ctr <= reset_ctr + 1;
-		else
-			reset_ctr <= 8'd0;
-		reset <= reset_ctr[7];
-	end
 	wire[3:0] nonce_start = dip;
 	wire miner_busy;
    
@@ -98,7 +82,7 @@ module fpgaminer_top (osc_clk, RxD, TxD, led, extminer_rxd, extminer_txd, dip);
    wire [255:0] 	midstate, data2;
 	wire [3:0] nonce_start_mask;
 	wire start_mining;
-   serial_receive serrx (.clk(dv_clk), .RxD(RxD), .midstate(midstate), .data2(data2), .nonce_start_mask(nonce_start_mask), .reset(reset), .RxRDY(start_mining));
+   serial_receive serrx (.clk(dv_clk), .RxD(RxD), .midstate(midstate), .data2(data2), .nonce_start_mask(nonce_start_mask), .RxRDY(start_mining));
 
    // Local miners now directly connected
 	
@@ -107,7 +91,7 @@ module fpgaminer_top (osc_clk, RxD, TxD, led, extminer_rxd, extminer_txd, dip);
 	reg [3:0]ticket_CS = 4'b0001;
 	reg [3:0]ticket_NS;
 
-	sha256_top M (.clk(hash_clk), .rst(reset), .midstate(midstate), .data2(data2), .nonce_start_mask(nonce_start_mask), .golden_nonce(slave_nonces[31:0]), .got_ticket(got_ticket), .miner_busy(miner_busy), .nonce_start(nonce_start), .start_mining(start_mining));
+	sha256_top M (.clk(hash_clk), .midstate(midstate), .data2(data2), .nonce_start_mask(nonce_start_mask), .golden_nonce(slave_nonces[31:0]), .got_ticket(got_ticket), .miner_busy(miner_busy), .nonce_start(nonce_start), .start_mining(start_mining));
 
 
 always@ (posedge dv_clk)
@@ -144,7 +128,7 @@ assign new_nonces[0] = new_ticket;
       genvar 		  j;
       for (j = LOCAL_MINERS; j < SLAVES; j = j + 1)
 	begin: for_ports
-   	   slave_receive slrx (.clk(dv_clk), .RxD(extminer_rxd[j-LOCAL_MINERS]), .nonce(slave_nonces[j*32+31:j*32]), .new_nonce(new_nonces[j]), .reset(reset));
+   	   slave_receive slrx (.clk(dv_clk), .RxD(extminer_rxd[j-LOCAL_MINERS]), .nonce(slave_nonces[j*32+31:j*32]), .new_nonce(new_nonces[j]));
 	end
    endgenerate
 

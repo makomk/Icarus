@@ -21,7 +21,6 @@
 
 module sha256_top (
     clk,
-    rst,
     midstate,
     data2,
     miner_busy,
@@ -35,7 +34,6 @@ module sha256_top (
 parameter NONCE_CT = 32'd256;
 
 input           clk;
-input           rst;
 input [3:0] nonce_start;
 input [3:0] nonce_start_mask;
 input start_mining;
@@ -68,9 +66,6 @@ reg		start_mining_d1 = 1'b0;
 reg		start_mining_d2 = 1'b0;
 reg	[31:0]	hash2_head;
 reg    miner_busy;
-(* KEEP *)
-reg    reset_n1,reset_n2,reset_n3,reset_n4,reset_n5,reset_n6;
-reg rst_d1, rst_d2;
 
 //  BUFGCE clkout1_buf
 //   (.O   (clk_work),
@@ -98,9 +93,6 @@ assign nonce_next    = nonce + 32'd1;
 
 
 always@(posedge clk)
-    if(reset_n5)
-        work <= #1 1'b0;
-    else  
 		if(start_mining_d2)
 			work <= #1 1'b1;
 		 else
@@ -112,9 +104,7 @@ always@(posedge clk)
 
 always@(posedge clk)
 begin
-    if(reset_n6)
-        nonce <= #1 NONCE_CT;
-	 else if(start_mining_d2)
+    if(start_mining_d2)
 		  nonce <= #1 NONCE_CT;
     else if(work)
         nonce <= #1 nonce_next;
@@ -141,21 +131,8 @@ always@(posedge clk)
 	end
 
 always@(posedge clk)
-	begin
-		   rst_d1 <= rst;
-			rst_d2 <= rst_d1;
-			reset_n1	<= rst_d2;
-			reset_n2	<= rst_d2;
-			reset_n3	<= rst_d2;
-			reset_n5	<= rst_d2;
-			reset_n6	<= rst_d2;
-	end
-
-always@(posedge clk)
 begin
-    if(reset_n1)
-		  got_ticket <= #1 1'b0;
-	 else if (start_mining_d2)
+    if (start_mining_d2)
 		got_ticket <= #1 1'b0;
     else if(got_ticket_d3)
       got_ticket <= #1 1'b1;
@@ -165,9 +142,7 @@ end
 
 always@(posedge clk)
 begin
-    if(reset_n2)
-        golden_nonce_ct <= #1 32'd0;
-	 else if (start_mining_d2)
+    if (start_mining_d2)
 		  golden_nonce_ct <= #1 32'd0;
 	 else if (work)
 		  golden_nonce_ct <= #1 golden_nonce_ct + 1'b1;

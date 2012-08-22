@@ -1,4 +1,4 @@
-module slave_receive(clk, RxD, nonce, new_nonce, reset);
+module slave_receive(clk, RxD, nonce, new_nonce);
    // Serial receive buffer for a 4-byte nonce
 
    input      clk;
@@ -23,24 +23,17 @@ module slave_receive(clk, RxD, nonce, new_nonce, reset);
 
    assign nonce = input_copy;
 
-   // As in serial.v
-   input      reset;
-   
 	//add wdt timer.
 	
 	always @(posedge clk)
-		if(reset) 
-			wdt_counter <= 1'b0;
-		else if(demux_state != 0)
+		if(demux_state != 0)
 			wdt_counter <= wdt_counter + 1'b1;
 		else
 			wdt_counter <= 1'b0;
-	
-	
-   always @(posedge clk)
+
+	always @(posedge clk)
      begin
-	if (reset) demux_state <= 0;
-     
+	     
 	case (demux_state)
 	  3'b100:
 	    begin
